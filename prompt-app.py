@@ -2,7 +2,6 @@ import os
 import streamlit as st
 import json
 import pandas as pd
-from streamlit_navigation_bar import st_navbar
 from data_manager import DataManager
 import streamlit as st
 
@@ -140,32 +139,19 @@ def input_page():
             add_entry(prompt, effect)
             st.success("Entry added successfully!")  # Optional success message
 
-# Navigation bar styling, defined before usage
-styles = {
-    "nav": {"background-color": "rgb(123, 209, 146)"},
-    "div": {"max-width": "10%"},
-    "span": {
-        "border-radius": "0.5rem",
-        "color": "rgb(49, 51, 63)",
-        "margin": "0 0.125rem",
-        "padding": "0.4375rem 0.625rem",
-    },
-    "active": {"background-color": "rgba(255, 255, 255, 0.25)"},
-    "hover": {"background-color": "rgba(255, 255, 255, 0.35)"},
-}
+# Initialize navigation state
+if 'current_page' not in st.session_state:
+    st.session_state['current_page'] = 'Home'
 
+# Display navigation buttons in a single centered column
+col1, col2, col3 = st.columns([1,3,1])
+with col1:
+    st.button('Home', on_click=lambda: setattr(st.session_state, 'current_page', 'Home'))
+with col2:
+    st.button('Input', on_click=lambda: setattr(st.session_state, 'current_page', 'Input'))
 
-# Setup navigation
-pages = ["Home", "Input"]
-page_functions = {
-    "Home": home,
-    "Input": input_page
-}
-selected_page = st_navbar(pages, styles=styles)
-
-# Sidebar optional content
-with st.sidebar:
-    st.write("Sidebar content here")
-
-page_functions[selected_page]()
-
+# Page display logic based on session state
+if st.session_state['current_page'] == 'Home':
+    home()
+elif st.session_state['current_page'] == 'Input':
+    input_page()
